@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ollama
+  labels:
+    app: ollama
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ollama
+  template:
+    metadata:
+      labels:
+        app: ollama
+    spec:
+      containers:
+        - name: ollama
+          image: ollama/ollama:latest
+          ports:
+            - containerPort: 11434
+          volumeMounts:
+            - name: code
+              mountPath: /code
+            - name: ollama
+              mountPath: /root/.ollama
+          resources:
+            limits:
+              nvidia.com/gpu: 1
+      volumes:
+        - name: code
+          hostPath:
+            path: /ollama
+        - name: ollama
+          hostPath:
+            path: /ollama/ollama
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+spec:
+  selector:
+    app: ollama
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 11434
+      targetPort: 11434
+
+---
+
