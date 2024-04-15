@@ -17,6 +17,7 @@ spec:
       containers:
         - name: ollama
           image: ollama/ollama:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 11434
           volumeMounts:
@@ -27,6 +28,8 @@ spec:
           resources:
             limits:
               nvidia.com/gpu: 1
+      nodeSelector:
+        kubernetes.io/hostname: "ubuntu3070ti"
       volumes:
         - name: code
           hostPath:
@@ -48,6 +51,7 @@ spec:
     - protocol: TCP
       port: 11434
       targetPort: 11434
+      nodePort: 32000
 
 ---
 
